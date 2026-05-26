@@ -71,6 +71,7 @@ log "Configuring firewall …"
 ufw default deny incoming > /dev/null 2>&1 || true
 ufw default allow outgoing > /dev/null 2>&1 || true
 ufw allow "$SSH_PORT"/tcp > /dev/null 2>&1 || true
+ufw allow 80/tcp > /dev/null 2>&1 || true
 ufw allow 443/tcp > /dev/null 2>&1 || true
 ufw --force enable > /dev/null 2>&1 || true
 
