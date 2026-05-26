@@ -20,11 +20,11 @@ err()  { echo -e "\n\033[1;31m!!!\033[0m $*" >&2; exit 1; }
 # ── Pre-flight checks ────────────────────────────────────────
 [[ $(id -u) -eq 0 ]] || err "Run as root."
 
-# ── Interactive prompts ────────────────────────────────────────
-read -rp "Enter your domain (e.g. mydomain.com): " KASM_DOMAIN
+# ── Interactive prompts (read from /dev/tty for curl|bash) ────
+read -rp "Enter your domain (e.g. mydomain.com): " KASM_DOMAIN < /dev/tty
 [[ -n "$KASM_DOMAIN" ]] || err "Domain cannot be empty."
 
-read -rp "Enter SSH port [22]: " SSH_PORT
+read -rp "Enter SSH port [22]: " SSH_PORT < /dev/tty
 SSH_PORT="${SSH_PORT:-22}"
 
 log "Starting Kasm install for $KASM_DOMAIN (SSH port: $SSH_PORT)"
