@@ -4,9 +4,9 @@ One-line installer for [Kasm Workspaces](https://kasm.com) on fresh Ubuntu serve
 
 ## What it does
 
-1. Installs base packages (curl, certbot, ufw, cron)
-2. Changes SSH port (customizable, default **22**)
-3. Configures UFW firewall (allows custom SSH port + HTTPS 443)
+1. Updates and upgrades the system
+2. Changes SSH port (you choose during setup)
+3. Configures UFW firewall (allows your SSH port + HTTPS 443)
 4. Creates swap (auto-sized to match RAM, capped at 8GB)
 5. Installs **Kasm Workspaces 1.18.0** (latest)
 6. Issues **Let's Encrypt SSL** with auto-renewal
@@ -18,25 +18,21 @@ One-line installer for [Kasm Workspaces](https://kasm.com) on fresh Ubuntu serve
 SSH into a **fresh Ubuntu** server (22.04 or 24.04) as root, then run:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/apckish/kasm-installer/main/install.sh | bash -s -- YOUR_DOMAIN [SSH_PORT]
+curl -sL https://raw.githubusercontent.com/apckish/kasm-installer/main/install.sh | bash
 ```
 
-### Examples
+The script will ask you for:
+1. **Domain** — e.g. `mydomain.com`
+2. **SSH port** — press Enter to keep default (22), or type a custom port
 
-```bash
-# Default SSH port (22)
-curl -sL https://raw.githubusercontent.com/apckish/kasm-installer/main/install.sh | bash -s -- mydomain.com
-
-# Custom SSH port
-curl -sL https://raw.githubusercontent.com/apckish/kasm-installer/main/install.sh | bash -s -- mydomain.com 2222
-```
+That's it — everything else is automatic.
 
 ## Prerequisites
 
 - Fresh **Ubuntu 22.04 or 24.04**
 - Run as **root**
 - **DNS A record** pointed to the server's IP before running
-- Ports **443** and your chosen **SSH port** (default 22) open at your hosting provider
+- Ports **443** and your chosen **SSH port** open at your hosting provider
 
 ## After install
 
