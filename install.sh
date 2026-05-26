@@ -64,7 +64,12 @@ if [ -d /etc/ssh/sshd_config.d ]; then
     done
 fi
 
-systemctl restart sshd || systemctl restart ssh || true
+# Try ssh.service first (Ubuntu 24.04+), then sshd.service (older)
+if systemctl list-units --type=service --all | grep -q 'ssh.service'; then
+    systemctl restart ssh
+else
+    systemctl restart sshd
+fi
 
 # ── 3. Firewall ──────────────────────────────────────────────
 log "Configuring firewall …"
@@ -110,10 +115,12 @@ USER_PASS=$(grep -oP 'user@kasm.local.*?Password:\s*\K\S+' /tmp/kasm_install.log
 
 # ── 6. Let's Encrypt SSL ─────────────────────────────────────
 log "Issuing Let's Encrypt certificate for $KASM_DOMAIN …"
+# Stop kasm_proxy so certbot can bind to port 443
+docker stop kasm_proxy || true
 certbot certonly --standalone --non-interactive --agree-tos \
     --register-unsafely-without-email -d "$KASM_DOMAIN" \
-    --pre-hook "docker stop kasm_proxy" \
-    --post-hook "docker start kasm_proxy"
+    --preferred-challenges http
+docker start kasm_proxy || true
 
 cp "/etc/letsencrypt/live/$KASM_DOMAIN/fullchain.pem" /opt/kasm/current/certs/kasm_nginx.crt
 cp "/etc/letsencrypt/live/$KASM_DOMAIN/privkey.pem"   /opt/kasm/current/certs/kasm_nginx.key
