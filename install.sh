@@ -26,9 +26,11 @@ err()  { echo -e "\n\033[1;31m!!!\033[0m $*" >&2; exit 1; }
 
 log "Starting Kasm install for $KASM_DOMAIN"
 
-# ── 1. System packages ───────────────────────────────────────
-log "Installing base packages …"
+# ── 1. System update & packages ───────────────────────────────
+log "Updating system …"
 apt-get update -qq
+apt-get upgrade -y -qq > /dev/null
+log "Installing base packages …"
 apt-get install -y -qq curl sudo cron certbot ufw > /dev/null
 
 # ── 2. SSH port ───────────────────────────────────────────────
