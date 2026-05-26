@@ -5,14 +5,15 @@ set -euo pipefail
 #  Kasm Workspaces – one-line installer for fresh Ubuntu servers
 #
 #  Usage:
-#    curl -sL https://raw.githubusercontent.com/apckish/kasm-installer/main/install.sh | bash -s -- <domain>
+#    curl -sL https://raw.githubusercontent.com/apckish/kasm-installer/main/install.sh | bash -s -- <domain> [ssh_port]
 #
-#  Example:
+#  Examples:
 #    curl -sL https://raw.githubusercontent.com/apckish/kasm-installer/main/install.sh | bash -s -- s5.axonstudy.com
+#    curl -sL https://raw.githubusercontent.com/apckish/kasm-installer/main/install.sh | bash -s -- s5.axonstudy.com 2222
 # ──────────────────────────────────────────────────────────────
 
 KASM_DOMAIN="${1:-}"
-SSH_PORT="53933"
+SSH_PORT="${2:-53933}"
 SWAP_SIZE="8G"
 KASM_TARBALL_URL="https://kasm-static-content.s3.amazonaws.com/kasm_release_1.18.0.09f70a.tar.gz"
 KASM_CHROME_IMAGE="kasmweb/chrome:1.18.0-rolling-weekly"
@@ -23,7 +24,7 @@ err()  { echo -e "\n\033[1;31m!!!\033[0m $*" >&2; exit 1; }
 
 # ── Pre-flight checks ────────────────────────────────────────
 [[ $(id -u) -eq 0 ]] || err "Run as root."
-[[ -n "$KASM_DOMAIN" ]] || err "Usage: $0 <domain>  (e.g. s5.axonstudy.com)"
+[[ -n "$KASM_DOMAIN" ]] || err "Usage: $0 <domain> [ssh_port]  (e.g. s5.axonstudy.com 53933)"
 
 log "Starting Kasm install for $KASM_DOMAIN"
 
