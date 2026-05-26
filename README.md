@@ -7,7 +7,7 @@ One-line installer for [Kasm Workspaces](https://kasm.com) on fresh Ubuntu serve
 1. Installs base packages (curl, certbot, ufw, cron)
 2. Changes SSH port (customizable, default **22**)
 3. Configures UFW firewall (allows custom SSH port + HTTPS 443)
-4. Creates 8GB swap
+4. Creates swap (auto-sized to match RAM, capped at 8GB)
 5. Installs **Kasm Workspaces 1.18.0** (latest)
 6. Issues **Let's Encrypt SSL** with auto-renewal
 7. Pulls **Chrome** workspace image

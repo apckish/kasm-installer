@@ -13,7 +13,6 @@ set -euo pipefail
 
 KASM_DOMAIN="${1:-}"
 SSH_PORT="${2:-22}"
-SWAP_SIZE="8G"
 KASM_TARBALL_URL="https://kasm-static-content.s3.amazonaws.com/kasm_release_1.18.0.09f70a.tar.gz"
 KASM_CHROME_IMAGE="kasmweb/chrome:1.18.0-rolling-weekly"
 
@@ -56,8 +55,16 @@ ufw allow "$SSH_PORT"/tcp > /dev/null 2>&1 || true
 ufw allow 443/tcp > /dev/null 2>&1 || true
 ufw --force enable > /dev/null 2>&1 || true
 
-# ── 4. Swap ──────────────────────────────────────────────────
-log "Setting up ${SWAP_SIZE} swap …"
+# ── 4. Swap (auto-sized based on RAM) ────────────────────────
+RAM_MB=$(awk '/MemTotal/ {print int($2/1024)}' /proc/meminfo)
+if [ "$RAM_MB" -le 2048 ]; then
+    SWAP_SIZE="${RAM_MB}M"
+elif [ "$RAM_MB" -le 8192 ]; then
+    SWAP_SIZE="${RAM_MB}M"
+else
+    SWAP_SIZE="8G"
+fi
+log "Detected ${RAM_MB}MB RAM → creating ${SWAP_SIZE} swap …"
 if [ ! -f /swapfile ]; then
     fallocate -l "$SWAP_SIZE" /swapfile
     chmod 600 /swapfile
