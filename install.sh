@@ -7,13 +7,12 @@ set -euo pipefail
 #  Usage:
 #    curl -sL https://raw.githubusercontent.com/apckish/kasm-installer/main/install.sh | bash -s -- <domain> [ssh_port]
 #
-#  Examples:
-#    curl -sL https://raw.githubusercontent.com/apckish/kasm-installer/main/install.sh | bash -s -- s5.axonstudy.com
-#    curl -sL https://raw.githubusercontent.com/apckish/kasm-installer/main/install.sh | bash -s -- s5.axonstudy.com 2222
+#  Example:
+#    curl -sL https://raw.githubusercontent.com/apckish/kasm-installer/main/install.sh | bash -s -- mydomain.com 22
 # ──────────────────────────────────────────────────────────────
 
 KASM_DOMAIN="${1:-}"
-SSH_PORT="${2:-53933}"
+SSH_PORT="${2:-22}"
 SWAP_SIZE="8G"
 KASM_TARBALL_URL="https://kasm-static-content.s3.amazonaws.com/kasm_release_1.18.0.09f70a.tar.gz"
 KASM_CHROME_IMAGE="kasmweb/chrome:1.18.0-rolling-weekly"
@@ -24,7 +23,7 @@ err()  { echo -e "\n\033[1;31m!!!\033[0m $*" >&2; exit 1; }
 
 # ── Pre-flight checks ────────────────────────────────────────
 [[ $(id -u) -eq 0 ]] || err "Run as root."
-[[ -n "$KASM_DOMAIN" ]] || err "Usage: $0 <domain> [ssh_port]  (e.g. s5.axonstudy.com 53933)"
+[[ -n "$KASM_DOMAIN" ]] || err "Usage: $0 <domain> [ssh_port]  (e.g. mydomain.com 2222)"
 
 log "Starting Kasm install for $KASM_DOMAIN"
 
@@ -33,7 +32,7 @@ log "Installing base packages …"
 apt-get update -qq
 apt-get install -y -qq curl sudo cron certbot ufw > /dev/null
 
-# ── 2. SSH port → 53933 ──────────────────────────────────────
+# ── 2. SSH port ───────────────────────────────────────────────
 log "Changing SSH port to $SSH_PORT …"
 sed -i "s/^#\?Port .*/Port $SSH_PORT/" /etc/ssh/sshd_config
 if ! grep -q "^Port $SSH_PORT" /etc/ssh/sshd_config; then
