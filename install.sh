@@ -32,13 +32,17 @@ log "Starting Kasm install for $KASM_DOMAIN (SSH port: $SSH_PORT)"
 # ── 1. Wait for apt lock & system update ──────────────────────
 WAIT_SEC=0
 if fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1 || fuser /var/lib/apt/lists/lock >/dev/null 2>&1; then
-    log "Another package manager is running. Waiting for it to finish …"
+    log "Another package manager is running. Waiting for it to finish (usually 2-5 min) …"
     while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1 || fuser /var/lib/apt/lists/lock >/dev/null 2>&1; do
-        printf "\r    ⏳ Waited %d seconds …" "$WAIT_SEC"
+        MINS=$((WAIT_SEC / 60))
+        SECS=$((WAIT_SEC % 60))
+        printf "\r    ⏳ Waited %dm %02ds … (typically finishes within 5 min)" "$MINS" "$SECS"
         sleep 5
         WAIT_SEC=$((WAIT_SEC + 5))
     done
-    printf "\r    ✔ Lock released after %d seconds.          \n" "$WAIT_SEC"
+    MINS=$((WAIT_SEC / 60))
+    SECS=$((WAIT_SEC % 60))
+    printf "\r    ✔ Lock released after %dm %02ds.                                  \n" "$MINS" "$SECS"
 fi
 log "Updating system …"
 apt-get update -qq
