@@ -26,7 +26,14 @@ err()  { echo -e "\n\033[1;31m!!!\033[0m $*" >&2; exit 1; }
 
 log "Starting Kasm install for $KASM_DOMAIN"
 
-# ── 1. System update & packages ───────────────────────────────
+# ── 1. Wait for apt lock & system update ──────────────────────
+log "Waiting for any running apt/dpkg processes to finish …"
+while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
+    sleep 5
+done
+while fuser /var/lib/apt/lists/lock >/dev/null 2>&1; do
+    sleep 5
+done
 log "Updating system …"
 apt-get update -qq
 apt-get upgrade -y -qq > /dev/null
